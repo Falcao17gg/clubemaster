@@ -2,32 +2,53 @@
 session_start();
 include 'ligarbd.php';
 
-
 $mensagem = "";
 $classe_mensagem = "alert-danger"; // Classe padrão para mensagens de erro
-
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
    
     //se clicou em registar
     if(isset($_POST['btn_registar'])){
 
-        //verificar se o código e o email já estão criados pelo administrador na BD
+        $email = $_POST["email"];
+        $codigo = $_POST["codigo"];
+        $password = $_POST["password"]; // Nova senha adicionada
 
-        $email=$_POST["email"];
-        $codigo=$_POST["codigo"];
-
-        $sql="select * from clube where email= '$email' and codigo='$codigo'";
-        $result=mysqli_query($conn,$sql);
-        $row=mysqli_fetch_array($result);
+        // Verificar se o código e o email já estão criados pelo administrador na BD
+        $sql = "SELECT * FROM clube WHERE email = ? AND codigo = ?";
+        $stmt = mysqli_prepare($conn, $sql);
+        mysqli_stmt_bind_param($stmt, "ss", $email, $codigo);
+        mysqli_stmt_execute($stmt);
+        $result = mysqli_stmt_get_result($stmt);
+        $row = mysqli_fetch_array($result);
 
         if(!$row){
-            $mensagem="Email e/ou Código inválidos. Se o erro persistir envie um email para apoioaocliente@clubemaster.com.";
-        }else{
-              $_SESSION['clube']=$row['codigo'];
-              $_SESSION['mail']=$row['email'];
-              echo "<script>window.location.href='definicoes.php'</script>";
-              exit();
+            $mensagem = "Email e/ou Código inválidos. Se o erro persistir envie um email para apoioaocliente@clubemaster.com.";
+        } else {
+            // Se o clube já existe, verificar se a senha já está definida
+            if (empty($row['password'])) {
+                // Hash da nova senha
+                $hashed_password = password_hash($password, PASSWORD_DEFAULT);
+
+                // Atualizar a senha na base de dados
+                $sql_update = "UPDATE clube SET password = ? WHERE codigo = ?";
+                $stmt_update = mysqli_prepare($conn, $sql_update);
+                mysqli_stmt_bind_param($stmt_update, "ss", $hashed_password, $codigo);
+                
+                if (mysqli_stmt_execute($stmt_update)) {
+                    $_SESSION['clube'] = $row['codigo'];
+                    $_SESSION['mail'] = $row['email'];
+                    echo "<script>window.location.href='definicoes.php'</script>";
+                    exit();
+                } else {
+                    $mensagem = "Erro ao definir a senha: " . mysqli_error($conn);
+                }
+            } else {
+                // Se a senha já está definida, significa que o registo já foi concluído.
+                // Neste caso, o utilizador deve usar a página de login.
+                $mensagem = "Este clube já se encontra registado. Por favor, utilize a página de login.";
+                $classe_mensagem = "alert-warning";
+            }
         }
     }
 }
@@ -59,23 +80,23 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             <h2 class="fs-6 fw-normal text-center text-secondary mb-4">Registar Clube</h2>
 
             <div class="alert <?php echo $classe_mensagem; ?> text-center">
-                <p>Para efetuar o registo, é necessário um código de acesso. O código deve ser pedido por email: apoioaocliente@clubemaster.com.</p>
+                <p>Para efetuar o registo, é necessário um código de acesso. O código deve ser pedido por email: apoioaocliente@clubemaster.com</p>
               </div>
 
             <form method="post" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]);?>">
+              <div class="mb-3">
+                <label for="codigo" class="form-label">Código</label>
+                <input type="text" class="form-control" name="codigo" id="codigo" required>
+                <div class="form-text">Introduza o código de acesso que recebeu via email.</div>
+              </div>
               <div class="mb-3">
                 <label for="email" class="form-label">Email</label>
                 <input type="email" class="form-control" name="email" id="email" required>
               </div>
               <div class="mb-3">
-                <input type="text" class="form-control w-50" name="codigo" id="codigo" maxlength="6"  required>
-                <div class="form-text">Introduza o código de acesso que recebeu via email.</div>
+                <label for="password" class="form-label">Password</label>
+                <input type="password" class="form-control" name="password" id="password" required>
               </div>
-              <script>
-                  document.getElementById('codigo').addEventListener('input', function () {
-                    this.value = this.value.replace(/\D/g, ''); // remove tudo o que não for dígito
-                  });
-             </script>
               <div class="d-grid my-3">
                 <button class="btn btn-primary btn-lg" type="submit" style="background-color:#C41E3A;" name="btn_registar">Registar</button>
               </div>
@@ -101,3 +122,4 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
+

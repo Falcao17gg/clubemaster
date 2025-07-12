@@ -244,12 +244,7 @@ $result_funcoes = mysqli_query($conn, $sql_funcoes);
         <ul class="main-menu mobile-menu">
             <li><a href="./home.php">Home</a></li>
             <li><a href="./atletas.php">Atletas</a>
-                <ul class="dropdown">
-                    <li><a href="./perfil.php">Perfil</a></li>
-                    <li><a href="./ficha_clinica.php">Ficha Clínica</a></li>
-                    <li><a href="./documentos.php">Upload de Documentos</a></li>
-                    <li><a href="./historico.php">Histórico</a></li>
-                </ul>
+    
             </li>
             <li><a href="#">Treinos</a>
                 <ul class="dropdown">

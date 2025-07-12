@@ -397,14 +397,17 @@ if (isset($_SESSION['msg']) && isset($_SESSION['msg_type'])) {
                                             </p>
                                         </div>
                                         <div class="card-footer text-center">
-                                            <div class="btn-group" role="group">
-                                                <a href="editar_atleta.php?id=<?php echo $atleta['id_atleta']; ?>" class="btn btn-primary btn-sm">
-                                                    <i class="fa fa-edit"></i> Editar
-                                                </a>
-                                                <a href="#" class="btn btn-danger btn-sm" onclick="confirmarExclusao(<?php echo $atleta['id_atleta']; ?>, '<?php echo htmlspecialchars($atleta['nome']); ?>')">
-                                                    <i class="fa fa-trash"></i> Excluir
-                                                </a>
-                                            </div>
+<div class="btn-group" role="group">
+    <a href="editar_atleta.php?id=<?php echo $atleta['id_atleta']; ?>" class="btn btn-primary btn-sm">
+        <i class="fa fa-edit"></i> Editar
+    </a>
+    <a href="perfil.php?id=<?php echo $atleta['id_atleta']; ?>" class="btn btn-info btn-sm">
+        <i class="fa fa-user"></i> Perfil
+    </a>
+    <a href="#" class="btn btn-danger btn-sm" onclick="confirmarExclusao(<?php echo $atleta['id_atleta']; ?>, '<?php echo htmlspecialchars($atleta['nome']); ?>')">
+        <i class="fa fa-trash"></i> Excluir
+    </a>
+</div>
                                         </div>
                                     </div>
                                 </div>

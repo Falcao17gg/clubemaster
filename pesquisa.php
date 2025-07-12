@@ -51,7 +51,7 @@ if (!empty($termo_pesquisa)) {
                    AND (escalao LIKE ? 
                    OR local LIKE ?
                    OR tipo_treino LIKE ?)
-                   ORDER BY data DESC, hora DESC";
+                   ORDER BY data DESC, hora_inicio DESC";
                    
     $stmt_treinos = mysqli_prepare($conn, $sql_treinos);
     mysqli_stmt_bind_param($stmt_treinos, "ssss", $codigo_clube, $termo_busca, $termo_busca, $termo_busca);
@@ -76,8 +76,8 @@ if (!empty($termo_pesquisa)) {
     $sql_documentos = "SELECT d.*, a.nome as nome_atleta 
                       FROM documentos d
                       LEFT JOIN atletas a ON d.id_atleta = a.id_atleta
-                      WHERE d.codigo_clube = ? 
-                      AND (d.nome_documento LIKE ? 
+                      WHERE a.codigo_clube = ? 
+                      AND (d.nome_arquivo LIKE ? 
                       OR d.tipo_documento LIKE ?
                       OR a.nome LIKE ?)
                       ORDER BY d.data_upload DESC";
@@ -358,7 +358,7 @@ if (!empty($termo_pesquisa)) {
                                                     <?php while($treino = mysqli_fetch_assoc($result_treinos)): ?>
                                                     <tr>
                                                         <td><?php echo date('d/m/Y', strtotime($treino['data'])); ?></td>
-                                                        <td><?php echo date('H:i', strtotime($treino['hora'])); ?></td>
+                                                    <td><?php echo date('H:i', strtotime($treino['hora_inicio'])); ?></td>
                                                         <td><?php echo htmlspecialchars($treino['local']); ?></td>
                                                         <td><?php echo htmlspecialchars($treino['escalao']); ?></td>
                                                         <td><?php echo htmlspecialchars($treino['tipo_treino']); ?></td>

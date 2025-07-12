@@ -29,8 +29,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $mensagem = mysqli_real_escape_string($conn, $_POST['mensagem']);
         
         // Inserir mensagem no banco de dados
-        $sql_insert = "INSERT INTO mensagens_internas (codigo_clube, remetente, destinatario, assunto, mensagem) 
-                      VALUES ('$codigo_clube', '{$_SESSION['nome']}', '$destinatario', '$assunto', '$mensagem')";
+        $sql_insert = "INSERT INTO mensagens_internas (codigo_clube, remetente, destinatario, assunto, mensagem) VALUES ('$codigo_clube', '" . (isset($_SESSION['nome']) ? $_SESSION['nome'] : 'Desconhecido') . "', '$destinatario', '$assunto', '$mensagem')";
         
         if (mysqli_query($conn, $sql_insert)) {
             $msg = "Mensagem interna enviada com sucesso!";

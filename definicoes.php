@@ -106,7 +106,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 $senha_bd = $row_senha['password'];
                 
                 // Verificar se a senha atual está correta
-                if(password_verify($senha_atual, $senha_bd)) {
+                // Se a senha_bd não for um hash (ex: texto simples), password_verify retornará false.
+                // Para permitir a transição de senhas em texto simples para hasheadas, 
+                // podemos verificar se a senha_bd é igual à senha_atual (texto simples) OU se password_verify é true.
+                if (password_verify($senha_atual, $senha_bd) || ($senha_bd === $senha_atual && !password_needs_rehash($senha_bd, PASSWORD_DEFAULT))) {
                     // Criptografar a nova senha
                     $senha_hash = password_hash($nova_senha, PASSWORD_DEFAULT);
                     
@@ -216,12 +219,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         <ul class="main-menu mobile-menu">
             <li><a href="./home.php">Home</a></li>
             <li><a href="./atletas.php">Atletas</a>
-                <ul class="dropdown">
-                    <li><a href="./perfil.php">Perfil</a></li>
-                    <li><a href="./ficha_clinica.php">Ficha Clínica</a></li>
-                    <li><a href="./documentos.php">Upload de Documentos</a></li>
-                    <li><a href="./historico.php">Histórico</a></li>
-                </ul>
+               
             </li>
             <li><a href="#">Treinos</a>
                 <ul class="dropdown">
@@ -277,12 +275,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                             <ul class="main-menu d-inline-block">
                                 <li><a href="./home.php">Home</a></li>
                                 <li><a href="./atletas.php">Atletas</a>
-                                    <ul class="dropdown">
-                                        <li><a href="./perfil.php">Perfil</a></li>
-                                        <li><a href="./ficha_clinica.php">Ficha Clínica</a></li>
-                                        <li><a href="./documentos.php">Upload de Documentos</a></li>
-                                        <li><a href="./historico.php">Histórico</a></li>
-                                    </ul>
+                                   
                                 </li>
                                 <li><a href="#">Treinos</a>
                                     <ul class="dropdown">
@@ -381,46 +374,40 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                                                 <?php endif; ?>
                                             </div>
                                         </div>
-                                        
                                         <div class="form-group row">
                                             <label for="nome_clube" class="col-sm-3 col-form-label">Nome do Clube</label>
-                                            <div class="col-sm-9">
-                                                <input type="text" class="form-control" id="nome_clube" name="nome_clube" value="<?php echo $nome_clube; ?>" required>
+                                            <div class="col-sm-9 mb-3">
+                                                <input type="text" class="form-control" id="nome_clube" name="nome_clube" value="<?php echo htmlspecialchars($nome_clube); ?>" required>
                                             </div>
                                         </div>
-                                        
                                         <div class="form-group row">
-                                            <label for="nome_utilizador" class="col-sm-3 col-form-label">Nome do Responsável</label>
-                                            <div class="col-sm-9">
-                                                <input type="text" class="form-control" id="nome_utilizador" name="nome_utilizador" value="<?php echo $nome_utilizador; ?>" required>
+                                            <label for="nome_utilizador" class="col-sm-3 col-form-label">Nome de Utilizador</label>
+                                            <div class="col-sm-9 mb-3">
+                                                <input type="text" class="form-control" id="nome_utilizador" name="nome_utilizador" value="<?php echo htmlspecialchars($nome_utilizador); ?>" required>
                                             </div>
                                         </div>
-                                        
                                         <div class="form-group row">
                                             <label for="email" class="col-sm-3 col-form-label">Email</label>
-                                            <div class="col-sm-9">
-                                                <input type="email" class="form-control" id="email" name="email" value="<?php echo $email; ?>" required>
+                                            <div class="col-sm-9 mb-3">
+                                                <input type="email" class="form-control" id="email" name="email" value="<?php echo htmlspecialchars($email); ?>" required>
                                             </div>
                                         </div>
-                                        
                                         <div class="form-group row">
                                             <label for="morada" class="col-sm-3 col-form-label">Morada</label>
-                                            <div class="col-sm-9">
-                                                <textarea class="form-control" id="morada" name="morada" rows="3"><?php echo $morada; ?></textarea>
+                                            <div class="col-sm-9 mb-3">
+                                                <input type="text" class="form-control" id="morada" name="morada" value="<?php echo htmlspecialchars($morada); ?>">
                                             </div>
                                         </div>
-                                        
                                         <div class="form-group row">
                                             <label for="imagem" class="col-sm-3 col-form-label">Logo do Clube</label>
-                                            <div class="col-sm-9">
-                                                <input type="file" class="form-control-file" id="imagem" name="imagem">
-                                                <small class="form-text text-muted">Deixe em branco para manter o logo atual.</small>
+                                            <div class="col-sm-9 mb-3">
+                                                <input type="file" class="form-control-file" id="imagem" name="imagem" accept="image/*">
+                                                <small class="form-text text-muted">Carregue uma nova imagem para o logo do clube.</small>
                                             </div>
                                         </div>
-                                        
-                                        <div class="form-group row">
+                                        <div class="form-group row mt-4">
                                             <div class="col-sm-12 text-center">
-                                                <button type="submit" name="btn_atualizar" class="btn btn-primary">Salvar Alterações</button>
+                                                <button type="submit" name="btn_atualizar" class="btn btn-primary">Atualizar Perfil</button>
                                             </div>
                                         </div>
                                     </form>
@@ -437,28 +424,24 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                                 <div class="card-body">
                                     <form method="post" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]);?>">
                                         <div class="form-group row">
-                                            <label for="senha_atual" class="col-sm-3 col-form-label">Senha Atual</label>
-                                            <div class="col-sm-9">
+                                            <label for="senha_atual" class="col-sm-4 col-form-label">Senha Atual</label>
+                                            <div class="col-sm-8 mb-3">
                                                 <input type="password" class="form-control" id="senha_atual" name="senha_atual" required>
                                             </div>
                                         </div>
-                                        
                                         <div class="form-group row">
-                                            <label for="nova_senha" class="col-sm-3 col-form-label">Nova Senha</label>
-                                            <div class="col-sm-9">
+                                            <label for="nova_senha" class="col-sm-4 col-form-label">Nova Senha</label>
+                                            <div class="col-sm-8 mb-3">
                                                 <input type="password" class="form-control" id="nova_senha" name="nova_senha" required>
-                                                <small class="form-text text-muted">A senha deve ter pelo menos 8 caracteres.</small>
                                             </div>
                                         </div>
-                                        
                                         <div class="form-group row">
-                                            <label for="confirmar_senha" class="col-sm-3 col-form-label">Confirmar Nova Senha</label>
-                                            <div class="col-sm-9">
+                                            <label for="confirmar_senha" class="col-sm-4 col-form-label">Confirmar Nova Senha</label>
+                                            <div class="col-sm-8 mb-3">
                                                 <input type="password" class="form-control" id="confirmar_senha" name="confirmar_senha" required>
                                             </div>
                                         </div>
-                                        
-                                        <div class="form-group row">
+                                        <div class="form-group row mt-4">
                                             <div class="col-sm-12 text-center">
                                                 <button type="submit" name="btn_alterar_senha" class="btn btn-primary">Alterar Senha</button>
                                             </div>
@@ -474,8 +457,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     </section>
     <!-- Settings Section End -->
 
-    <!-- Footer Section Begin -->
-    <footer class="footer-section">
+   <!-- Footer Section Begin -->
+   <footer class="footer-section">
         <div class="container">
             <div class="row">
                 <div class="col-lg-12 text-center">
@@ -488,16 +471,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     </footer>
     <!-- Footer Section End -->
 
-    <!-- Search model Begin -->
-    <div class="search-model">
-        <div class="h-100 d-flex align-items-center justify-content-center">
-            <div class="search-close-switch"><i class="fa fa-close"></i></div>
-            <form class="search-model-form">
-                <input type="text" id="search-input" placeholder="Search here.....">
-            </form>
-        </div>
-    </div>
-    <!-- Search model end -->
 
     <!-- Js Plugins -->
     <script src="js/jquery-3.3.1.min.js"></script>
@@ -506,44 +479,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <script src="js/jquery.slicknav.js"></script>
     <script src="js/owl.carousel.min.js"></script>
     <script src="js/main.js"></script>
-    
-    <script>
-        // Validação de formulário
-        $(document).ready(function() {
-            // Validar formulário de alteração de senha
-            $('form[name="form_alterar_senha"]').submit(function(e) {
-                var senha_atual = $('#senha_atual').val();
-                var nova_senha = $('#nova_senha').val();
-                var confirmar_senha = $('#confirmar_senha').val();
-                
-                if (senha_atual === '') {
-                    alert('Por favor, insira a senha atual.');
-                    e.preventDefault();
-                    return false;
-                }
-                
-                if (nova_senha === '') {
-                    alert('Por favor, insira a nova senha.');
-                    e.preventDefault();
-                    return false;
-                }
-                
-                if (nova_senha.length < 8) {
-                    alert('A nova senha deve ter pelo menos 8 caracteres.');
-                    e.preventDefault();
-                    return false;
-                }
-                
-                if (nova_senha !== confirmar_senha) {
-                    alert('A nova senha e a confirmação não coincidem.');
-                    e.preventDefault();
-                    return false;
-                }
-                
-                return true;
-            });
-        });
-    </script>
 </body>
 
 </html>
+

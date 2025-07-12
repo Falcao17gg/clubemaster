@@ -19,7 +19,8 @@ if (isset($_SESSION['clube'])) {
 $msg = "";
 $id_atleta = "";
 $data = "";
-$hora = "";
+$hora_inicio = "";
+$hora_fim = "";
 $local = "";
 $escalao = "";
 $tipo_treino = "Normal"; // Valor padrão
@@ -29,21 +30,23 @@ $observacoes = "";
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     if(isset($_POST['btn_adicionar'])) {
         $data = mysqli_real_escape_string($conn, $_POST['data']);
-        $hora = mysqli_real_escape_string($conn, $_POST['hora']);
+        $hora_inicio = mysqli_real_escape_string($conn, $_POST['hora_inicio']);
+        $hora_fim = mysqli_real_escape_string($conn, $_POST['hora_fim']);
         $local = mysqli_real_escape_string($conn, $_POST['local']);
         $escalao = mysqli_real_escape_string($conn, $_POST['escalao']);
         $tipo_treino = mysqli_real_escape_string($conn, $_POST['tipo_treino']);
         $observacoes = mysqli_real_escape_string($conn, $_POST['observacoes']);
         
         // Inserir treino na base de dados
-        $sql = "INSERT INTO treinos (codigo_clube, data, hora, local, escalao, tipo_treino, observacoes) 
-                VALUES ('$codigo_clube', '$data', '$hora', '$local', '$escalao', '$tipo_treino', '$observacoes')";
+        $sql = "INSERT INTO treinos (codigo_clube, data, hora_inicio, hora_fim, local, escalao, tipo_treino, observacoes) 
+                VALUES ('$codigo_clube', '$data', '$hora_inicio', '$hora_fim', '$local', '$escalao', '$tipo_treino', '$observacoes')";
         
         if(mysqli_query($conn, $sql)) {
             $msg = "Treino agendado com sucesso!";
             // Limpar campos após sucesso
             $data = "";
-            $hora = "";
+            $hora_inicio = "";
+            $hora_fim = "";
             $local = "";
             $escalao = "";
             $tipo_treino = "Normal";
@@ -64,7 +67,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     if(isset($_POST['btn_editar'])) {
         $id_treino = mysqli_real_escape_string($conn, $_POST['id_treino']);
         $data = mysqli_real_escape_string($conn, $_POST['data']);
-        $hora = mysqli_real_escape_string($conn, $_POST['hora']);
+        $hora_inicio = mysqli_real_escape_string($conn, $_POST['hora_inicio']);
+        $hora_fim = mysqli_real_escape_string($conn, $_POST['hora_fim']);
         $local = mysqli_real_escape_string($conn, $_POST['local']);
         $escalao = mysqli_real_escape_string($conn, $_POST['escalao']);
         $tipo_treino = mysqli_real_escape_string($conn, $_POST['tipo_treino']);
@@ -73,7 +77,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         // Atualizar treino na base de dados
         $sql = "UPDATE treinos SET 
                 data = '$data', 
-                hora = '$hora', 
+                hora_inicio = '$hora_inicio', 
+                hora_fim = '$hora_fim', 
                 local = '$local', 
                 escalao = '$escalao',
                 tipo_treino = '$tipo_treino',
@@ -140,7 +145,8 @@ if(isset($_GET['editar']) && !empty($_GET['editar'])) {
         $treino = mysqli_fetch_assoc($result);
         $id_treino = $treino['id_treino'];
         $data = $treino['data'];
-        $hora = $treino['hora'];
+        $hora_inicio = $treino['hora_inicio'];
+        $hora_fim = $treino['hora_fim'];
         $local = $treino['local'];
         $escalao = $treino['escalao'];
         $tipo_treino = $treino['tipo_treino'];
@@ -240,12 +246,6 @@ $tipos_treino = array(
         <ul class="main-menu mobile-menu">
             <li><a href="./home.php">Home</a></li>
             <li><a href="./atletas.php">Atletas</a>
-                <ul class="dropdown">
-                    <li><a href="./perfil.php">Perfil</a></li>
-                    <li><a href="./ficha_clinica.php">Ficha Clínica</a></li>
-                    <li><a href="./documentos.php">Upload de Documentos</a></li>
-                    <li><a href="./historico.php">Histórico</a></li>
-                </ul>
             </li>
             <li class="active"><a href="#">Treinos</a>
                 <ul class="dropdown">
@@ -301,12 +301,7 @@ $tipos_treino = array(
                             <ul class="main-menu d-inline-block">
                                 <li><a href="./home.php">Home</a></li>
                                 <li><a href="./atletas.php">Atletas</a>
-                                    <ul class="dropdown">
-                                        <li><a href="./perfil.php">Perfil</a></li>
-                                        <li><a href="./ficha_clinica.php">Ficha Clínica</a></li>
-                                        <li><a href="./documentos.php">Upload de Documentos</a></li>
-                                        <li><a href="./historico.php">Histórico</a></li>
-                                    </ul>
+                                
                                 </li>
                                 <li class="active"><a href="#">Treinos</a>
                                     <ul class="dropdown">
@@ -400,8 +395,12 @@ $tipos_treino = array(
                                         <input type="date" class="form-control" id="data" name="data" value="<?php echo $data; ?>" required>
                                     </div>
                                     <div class="form-group col-md-6">
-                                        <label for="hora">Hora</label>
-                                        <input type="time" class="form-control" id="hora" name="hora" value="<?php echo $hora; ?>" required>
+                                        <label for="hora_inicio">Hora Início</label>
+                                        <input type="time" class="form-control" id="hora_inicio" name="hora_inicio" value="<?php echo $hora_inicio; ?>" required>
+                                    </div>
+                                    <div class="form-group col-md-6">
+                                        <label for="hora_fim">Hora Fim</label>
+                                        <input type="time" class="form-control" id="hora_fim" name="hora_fim" value="<?php echo $hora_fim; ?>" required>
                                     </div>
                                 </div>
                                 
@@ -457,9 +456,69 @@ $tipos_treino = array(
                             </form>
                         </div>
                     </div>
+                    </div>
                 </div>
             </div>
         </div>
+
+            <div class="row justify-content-center">
+                <div class="col-lg-9">
+                    <div class="card">
+                    <div class="card-header">
+                        <h5>Lista de Treinos</h5>
+                    </div>
+                    <div class="card-body p-0">
+                        <div class="table-responsive">
+                            <table class="table table-striped table-sm">
+                                <thead>
+                                    <tr>
+                                        <th>Data</th>
+                                        <th>Hora Início</th>
+                                        <th>Hora Fim</th>
+                                        <th>Local</th>
+                                        <th>Escalão</th>
+                                        <th>Tipo</th>
+                                        <th>Ações</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <?php
+                                    $sql_treinos = "SELECT * FROM treinos WHERE codigo_clube = '$codigo_clube' ORDER BY data DESC";
+                                    $result_treinos = mysqli_query($conn, $sql_treinos);
+                                    if(mysqli_num_rows($result_treinos) > 0):
+                                        while($treino = mysqli_fetch_assoc($result_treinos)):
+                                    ?>
+<tr>
+                                        <td><?php echo date('d/m/Y', strtotime($treino['data'])); ?></td>
+                                        <td><?php echo date('H:i', strtotime($treino['hora_inicio'])); ?></td>
+                                        <td><?php echo date('H:i', strtotime($treino['hora_fim'])); ?></td>
+                                        <td><?php echo $treino['local']; ?></td>
+                                        <td><?php echo $treino['escalao']; ?></td>
+                                        <td><?php echo $treino['tipo_treino']; ?></td>
+                                        <td>
+                                            <a href="calendario_treinos.php?editar=<?php echo $treino['id_treino']; ?>" class="btn btn-sm btn-info">Editar</a>
+                                            <form method="post" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]);?>" style="display:inline-block;">
+                                                <input type="hidden" name="id_treino" value="<?php echo $treino['id_treino']; ?>">
+                                                <button type="submit" name="btn_excluir" class="btn btn-sm btn-danger" onclick="return confirm('Tem certeza que deseja excluir este treino?');">Excluir</button>
+                                            </form>
+                                        </td>
+                                    </tr>
+                                    <?php
+                                        endwhile;
+                                    else:
+                                    ?>
+                                    <tr>
+                                        <td colspan="7" class="text-center">Nenhum treino agendado.</td>
+                                    </tr>
+                                    <?php endif; ?>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
     </section>
     <!-- Calendar Section End -->
 
@@ -520,8 +579,11 @@ $tipos_treino = array(
                     // Já está configurado para redirecionar para a página de edição
                 },
                 dayClick: function(date, jsEvent, view) {
-                    // Ao clicar em um dia vazio, redireciona para adicionar um novo treino nessa data
-                    window.location.href = 'calendario_treinos.php?data=' + date.format();
+                    // Ao clicar em um dia, preenche o campo de data no formulário e rola a página até o formulário
+                    $('#data').val(date.format('YYYY-MM-DD'));
+                    $('html, body').animate({
+                        scrollTop: $("form").offset().top - 100
+                    }, 500);
                 }
             });
             

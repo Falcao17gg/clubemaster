@@ -216,8 +216,9 @@ $result_atletas = mysqli_query($conn, $sql_atletas);
             <div class="row">
                 <div class="col-lg-12">
                     <div class="bs-text">
-                        <h2>Convocatórias para Treinos</h2>
+                        <h2>Convocatórias de Treinos</h2>
                     </div>
+                    
                 </div>
             </div>
         </div>
@@ -240,12 +241,15 @@ $result_atletas = mysqli_query($conn, $sql_atletas);
             </div>
             <?php endif; ?>
             
-            <div class="row">
-                <div class="col-lg-12">
-                    <div class="section-title">
-                        <h3>Convocatórias para Treinos</h3>
-                        <p>Selecione um treino e convoque os atletas</p>
-                    </div>
+            <div class="row mb-4">
+                <div class="col-md-6">
+                    <h3>Convocatórias de Treinos</h3>
+                    <p>Selecione um treino e convoque os atletas</p>
+                </div>
+                <div class="col-md-6 text-right">
+                    <a href="calendario_treinos.php" class="btn btn-secondary">
+                        <i class="fa fa-calendar"></i> Calendário de Treinos
+                    </a>
                 </div>
             </div>
             

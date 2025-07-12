@@ -229,6 +229,8 @@ $result_consultas = mysqli_query($conn, $sql_consultas);
         <div class="loader"></div>
     </div>
 
+    
+
     <!-- Offcanvas Menu Section Begin -->
     <div class="offcanvas-menu-overlay"></div>
     <div class="offcanvas-menu-wrapper">
@@ -254,12 +256,6 @@ $result_consultas = mysqli_query($conn, $sql_consultas);
         <ul class="main-menu mobile-menu">
             <li><a href="./home.php">Home</a></li>
             <li class="active"><a href="./atletas.php">Atletas</a>
-                <ul class="dropdown">
-                    <li><a href="./perfil.php?id=<?php echo $id_atleta; ?>">Perfil</a></li>
-                    <li class="active"><a href="./ficha_clinica.php?id=<?php echo $id_atleta; ?>">Ficha Clínica</a></li>
-                    <li><a href="./documentos.php?id=<?php echo $id_atleta; ?>">Upload de Documentos</a></li>
-                    <li><a href="./historico.php?id=<?php echo $id_atleta; ?>">Histórico</a></li>
-                </ul>
             </li>
             <li><a href="#">Treinos</a>
                 <ul class="dropdown">
@@ -315,12 +311,7 @@ $result_consultas = mysqli_query($conn, $sql_consultas);
                             <ul class="main-menu d-inline-block">
                                 <li><a href="./home.php">Home</a></li>
                                 <li class="active"><a href="./atletas.php">Atletas</a>
-                                    <ul class="dropdown">
-                                        <li><a href="./perfil.php?id=<?php echo $id_atleta; ?>">Perfil</a></li>
-                                        <li class="active"><a href="./ficha_clinica.php?id=<?php echo $id_atleta; ?>">Ficha Clínica</a></li>
-                                        <li><a href="./documentos.php?id=<?php echo $id_atleta; ?>">Upload de Documentos</a></li>
-                                        <li><a href="./historico.php?id=<?php echo $id_atleta; ?>">Histórico</a></li>
-                                    </ul>
+                                    
                                 </li>
                                 <li><a href="#">Treinos</a>
                                     <ul class="dropdown">
@@ -372,6 +363,11 @@ $result_consultas = mysqli_query($conn, $sql_consultas);
         <div class="container">
             <div class="row">
                 <div class="col-lg-12">
+                    <div class="d-flex justify-content-end mb-3">
+                        <a href="perfil.php?id=<?php echo $id_atleta; ?>" class="btn btn-secondary">
+                            <i class="fa fa-arrow-left"></i> Voltar ao Perfil
+                        </a>
+                    </div>
                     <div class="contact-form">
                         <?php if(!empty($msg)): ?>
                         <div class="alert alert-<?php echo $msg_type; ?> alert-dismissible fade show" role="alert">

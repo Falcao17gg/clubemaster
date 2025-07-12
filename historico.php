@@ -146,8 +146,8 @@ $result_historico = mysqli_query($conn, $sql_historico);
             padding: 20px 0;
         }
         
-        .timeline:before {
-            content: '';
+           .timeline:before {
+            content: 
             position: absolute;
             top: 0;
             bottom: 0;
@@ -155,6 +155,9 @@ $result_historico = mysqli_query($conn, $sql_historico);
             background: #e60000;
             left: 50%;
             margin-left: -2px;
+        }
+        .timeline.no-events:before {
+            display: none;
         }
         
         .timeline-item {
@@ -314,12 +317,7 @@ $result_historico = mysqli_query($conn, $sql_historico);
         <ul class="main-menu mobile-menu">
             <li><a href="./home.php">Home</a></li>
             <li class="active"><a href="./atletas.php">Atletas</a>
-                <ul class="dropdown">
-                    <li><a href="./perfil.php?id=<?php echo $id_atleta; ?>">Perfil</a></li>
-                    <li><a href="./ficha_clinica.php?id=<?php echo $id_atleta; ?>">Ficha Clínica</a></li>
-                    <li><a href="./documentos.php?id=<?php echo $id_atleta; ?>">Upload de Documentos</a></li>
-                    <li class="active"><a href="./historico.php?id=<?php echo $id_atleta; ?>">Histórico</a></li>
-                </ul>
+               
             </li>
             <li><a href="#">Treinos</a>
                 <ul class="dropdown">
@@ -375,12 +373,7 @@ $result_historico = mysqli_query($conn, $sql_historico);
                             <ul class="main-menu d-inline-block">
                                 <li><a href="./home.php">Home</a></li>
                                 <li class="active"><a href="./atletas.php">Atletas</a>
-                                    <ul class="dropdown">
-                                        <li><a href="./perfil.php?id=<?php echo $id_atleta; ?>">Perfil</a></li>
-                                        <li><a href="./ficha_clinica.php?id=<?php echo $id_atleta; ?>">Ficha Clínica</a></li>
-                                        <li><a href="./documentos.php?id=<?php echo $id_atleta; ?>">Upload de Documentos</a></li>
-                                        <li class="active"><a href="./historico.php?id=<?php echo $id_atleta; ?>">Histórico</a></li>
-                                    </ul>
+                                    
                                 </li>
                                 <li><a href="#">Treinos</a>
                                     <ul class="dropdown">
@@ -432,6 +425,11 @@ $result_historico = mysqli_query($conn, $sql_historico);
         <div class="container">
             <div class="row">
                 <div class="col-lg-12">
+                    <div class="d-flex justify-content-end mb-3">
+                        <a href="perfil.php?id=<?php echo $id_atleta; ?>" class="btn btn-secondary">
+                            <i class="fa fa-arrow-left"></i> Voltar ao Perfil
+                        </a>
+                    </div>
                     <div class="contact-form">
                         <?php if(!empty($msg)): ?>
                         <div class="alert alert-<?php echo $msg_type; ?> alert-dismissible fade show" role="alert">
@@ -464,7 +462,8 @@ $result_historico = mysqli_query($conn, $sql_historico);
                                                 </div>
                                             </div>
                                             <div class="col-md-9">
-                                                <div class="timeline">
+<?php $no_events = mysqli_num_rows($result_historico) == 0; ?>
+<div class="timeline <?php echo $no_events ? 'no-events' : ''; ?>">
                                                     <?php 
                                                     $count = 0;
                                                     if(mysqli_num_rows($result_historico) > 0): 

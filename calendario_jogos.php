@@ -243,12 +243,6 @@ $tipos_jogo = array(
         <ul class="main-menu mobile-menu">
             <li><a href="./home.php">Home</a></li>
             <li><a href="./atletas.php">Atletas</a>
-                <ul class="dropdown">
-                    <li><a href="./perfil.php">Perfil</a></li>
-                    <li><a href="./ficha_clinica.php">Ficha Clínica</a></li>
-                    <li><a href="./documentos.php">Upload de Documentos</a></li>
-                    <li><a href="./historico.php">Histórico</a></li>
-                </ul>
             </li>
             <li><a href="#">Treinos</a>
                 <ul class="dropdown">
@@ -304,12 +298,7 @@ $tipos_jogo = array(
                             <ul class="main-menu d-inline-block">
                                 <li><a href="./home.php">Home</a></li>
                                 <li><a href="./atletas.php">Atletas</a>
-                                    <ul class="dropdown">
-                                        <li><a href="./perfil.php">Perfil</a></li>
-                                        <li><a href="./ficha_clinica.php">Ficha Clínica</a></li>
-                                        <li><a href="./documentos.php">Upload de Documentos</a></li>
-                                        <li><a href="./historico.php">Histórico</a></li>
-                                    </ul>
+                                  
                                 </li>
                                 <li><a href="#">Treinos</a>
                                     <ul class="dropdown">
@@ -406,9 +395,6 @@ $tipos_jogo = array(
                                         <label for="hora">Hora</label>
                                         <input type="time" class="form-control" id="hora" name="hora" value="<?php echo $hora; ?>" required>
                                     </div>
-                                </div>
-                                
-                                <div class="form-row">
                                     <div class="form-group col-md-6">
                                         <label for="local">Local</label>
                                         <input type="text" class="form-control" id="local" name="local" value="<?php echo $local; ?>" required>
@@ -417,13 +403,12 @@ $tipos_jogo = array(
                                         <label for="escalao">Escalão</label>
                                         <select class="form-control" id="escalao" name="escalao" required>
                                             <option value="">Selecione...</option>
-                                            <?php foreach($escaloes as $opcao): ?>
-                                            <option value="<?php echo $opcao; ?>" <?php echo ($escalao == $opcao) ? 'selected' : ''; ?>><?php echo $opcao; ?></option>
+                                            <?php foreach($escaloes as $esc): ?>
+                                            <option value="<?php echo $esc; ?>" <?php echo ($escalao == $esc) ? 'selected' : ''; ?>><?php echo $esc; ?></option>
                                             <?php endforeach; ?>
                                         </select>
                                     </div>
                                 </div>
-                                
                                 <div class="form-row">
                                     <div class="form-group col-md-6">
                                         <label for="adversario">Adversário</label>
@@ -438,7 +423,6 @@ $tipos_jogo = array(
                                         </select>
                                     </div>
                                 </div>
-                                
                                 <?php if(isset($_GET['editar'])): ?>
                                 <div class="form-row">
                                     <div class="form-group col-md-6">
@@ -451,34 +435,43 @@ $tipos_jogo = array(
                                     </div>
                                 </div>
                                 <?php endif; ?>
-                                
                                 <div class="form-group">
                                     <label for="observacoes">Observações</label>
                                     <textarea class="form-control" id="observacoes" name="observacoes" rows="3"><?php echo $observacoes; ?></textarea>
                                 </div>
-                                
-                                <div class="form-group text-right">
+                                <div class="form-group text-center">
                                     <?php if(isset($_GET['editar'])): ?>
-                                    <button type="submit" name="btn_editar" class="btn btn-primary">Atualizar Jogo</button>
+                                    <button type="submit" name="btn_editar" class="btn btn-primary">
+                                        <i class="fa fa-save"></i> Atualizar Jogo
+                                    </button>
+                                    <button type="submit" name="btn_excluir" class="btn btn-danger" onclick="return confirm('Tem certeza que deseja excluir este jogo?');">
+                                        <i class="fa fa-trash"></i> Excluir Jogo
+                                    </button>
                                     <?php else: ?>
-                                    <button type="submit" name="btn_adicionar" class="btn btn-primary">Agendar Jogo</button>
+                                    <button type="submit" name="btn_adicionar" class="btn btn-success">
+                                        <i class="fa fa-plus"></i> Agendar Jogo
+                                    </button>
                                     <?php endif; ?>
+                                    <a href="calendario_treinos.php" class="btn btn-secondary">
+                                        <i class="fa fa-times"></i> Cancelar
+                                    </a>
                                 </div>
                             </form>
                         </div>
                     </div>
                 </div>
             </div>
+        </div>
             
-            <div class="row">
-                <div class="col-lg-12">
+            <div class="row justify-content-center">
+                <div class="col-lg-9">
                     <div class="card">
                         <div class="card-header">
                             <h5>Lista de Jogos</h5>
                         </div>
-                        <div class="card-body">
+                        <div class="card-body p-0">
                             <div class="table-responsive">
-                                <table class="table table-striped">
+                                <table class="table table-striped table-sm">
                                     <thead>
                                         <tr>
                                             <th>Data</th>
